@@ -14,7 +14,10 @@ A model for Butler registry access control
 DMTN-169
 ========
 
-Butler manages read and write access to Rubin Observatory data. Different types of data require different access control rules (Data Release versus User Generated data products, for example). Butler itself also needs a backing SQL database to store its information, which should be protected from unauthorized modification. This tech note proposes a design for access control for both Butler queries and for data upload and download.
+Butler manages read and write access to Rubin Observatory data.
+Different types of data require different access control rules (Data Release versus User Generated data products, for example).
+Butler itself also needs a backing SQL database to store its information, which should be protected from unauthorized modification.
+This tech note proposes a design for access control for both Butler queries and for data upload and download mediated by Butler.
 
 **Links:**
 

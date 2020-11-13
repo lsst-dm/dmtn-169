@@ -37,10 +37,20 @@ authors:
 copyright: "2020, Association of Universities for Research in Astronomy, Inc. (AURA)"
 
 # Description. A short, 1-2 sentence statemement used by document indices.
-description: "Butler manages read and write access to Rubin Observatory data. Different types of data require different access control rules (Data Release versus User Generated data products, for example). Butler itself also needs a backing SQL database to store its information, which should be protected from unauthorized modification. This tech note proposes a design for access control for both Butler queries and for data upload and download."
+description: >
+  Proposes a design for access control for both Butler queries and for
+  data upload and download mediated by Butler.
 
 # Abstract, if available
-# abstract: >
+abstract: >
+  Butler manages read and write access to Rubin Observatory data.
+  Different types of data require different access control rules (Data
+  Release versus User Generated data products, for example).  Butler
+  itself also needs a backing SQL database to store its information, which
+  should be protected from unauthorized modification.  This tech note
+  proposes a design for access control for both Butler queries and for
+  data upload and download mediated by Butler.
+
 #           Write your paragraph
 #           here with multiple lines.
 #
