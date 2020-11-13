@@ -45,6 +45,7 @@ Design principles
 #. Granting every Science Platform user direct SQL access to the database underlying Butler is not desirable for both security and complexity reasons.
    Databases have a large attack surface, and access control restrictions in databases can be complex and tedious to manage.
 #. Creating accounts for each user in the underlying object data store is more feasible but still not ideal for similar complexity reasons.
+#. Creating Google Cloud Platform users for each user of the Science Platform is undesirable from both an identity management complexity perspective and for security reasons given the additional attack surface this exposes to compromised user accounts.
 #. Minimizing the number of access control systems is preferable for security.
    Each separate access control system is another place where users have to be onboarded and offboarded, and where a misconfiguration can cause unexpected results.
    Ideally, as many access control decisions as possible are made in one place.
@@ -64,6 +65,9 @@ For data downloads, transform GCS URLs that would be returned by Butler to `sign
 This will allow the client to download the data without needing GCS credentials.
 This assumes that any object storage system used in other Rubin Observatory Data Facilities will also support signed URLs.
 
+Alternately, if there are a large number of such URLs in a typical reply or if the client normally doesn't use most URLs, this can be optimized by adding another API call.
+Return GCS URLs or some equivalent pointer than then add a new API call to convert them to signed URLs on demand, and add code to the client to do that conversion before using a GCS URL.
+
 For data storage, the client would use the following process:
 
 #. Make an API call to Butler (via a client library that makes a REST API call) indicating that the client wants to store some data and providing metadata.
@@ -73,6 +77,27 @@ For data storage, the client would use the following process:
 
 In this design, all access control decisions are concentrated in the Butler server, and only the Butler server needs object store credentials or SQL database access.
 A single SQL database can continue to be used for both Data Release and User Generated data products without complex database ACLs.
+
+.. figure:: /_static/architecture.png
+   :name: Proposed Butler architecture
+
+   Proposed Butler architecture
+
+Drawbacks
+=========
+
+The Butler service, in this design, takes on the additional complexity of full responsibility for access control decisions beyond the simple "is this a valid Science Platform user" check performed by Gafaelfawr.
+However, the alternative is to materialize the same rules as ACLs in GCS and in a SQL database, which would mean somewhat more complexity.
+In that alternate design, access control rules would live in two different systems plus the synchronization code to maintain those rules.
+
+Requiring serialization and deserialization of the results of SQL queries and an additional hop through the Butler REST service will somewhat reduce performance and add some additional complexity compared to making direct SQL queries.
+
+This design does not solve the problem of merging results from an offline, local registry and the primary Rubin Observatory registry.
+It instead moves in the opposite direction towards preferring a single unified registry, and thus preferring all Butler actions be done online with connectivity to the Butler service.
+
+Butler can work with local files, but it's not clear how best to represent that in this model of combined registry.
+Users could store local path names in the portion of the central registry dedicated to their private work, but this is somewhat inelegant given the inherent ambiguity about what those paths represent.
+Alternately, users could use a local SQLite Butler registry for that purpose, but this again introduces the problem of how to work with both the primary Rubin Observatory Butler registry and those local registries.
 
 Interim design for DP0.1
 ========================
