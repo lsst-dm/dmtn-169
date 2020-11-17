@@ -14,10 +14,10 @@ Current state
 =============
 
 Butler is a Python library that mediates access to Rubin Observatory data.
-It uses a SQL database to store metadata about files.
+It uses a SQL database, via SQLAlchemy, to store metadata about files.
 That database can either be a local SQLite database or a remote SQL database.
 
-When a Rubin Science Platform user wants to process some data, they would call Butler to download the data, perform whatever processing they wish, and then call Butler again to store the results somewhere for future use.
+When a Rubin Science Platform user wants to process some data, they would call Butler to access the data, perform whatever processing they wish, and then call Butler again to store the results somewhere for future use.
 This requires the user running Butler to have direct access to the backing SQL database used by Butler.
 This database is called the registry.
 For Data Release data products, the Butler registry will be a central SQL database.
@@ -36,7 +36,7 @@ Requirements
 
 #. Users must be able to query the combination of Data Release and User Generated data products using Butler.
 #. Users must be able to download data products to which they have access, including the Data Release, and upload their own User Generated data products.
-#. Users must not have access to User Generated data products or the registry entries for those products unless they have been granted access by the owners of those User Generated data products.
+#. Users must not have access to User Generated data products or the registry entries for those products unless they have been granted access by the owners of those User Generated data products (either directly or via group membership).
 #. Data downloads and uploads should be done directly from the data storage (:abbr:`GCS (Google Cloud Storage)` or another object data store), not mediated by a service, for performance reasons.
 
 Design principles
@@ -61,9 +61,11 @@ Use `Gafaelfawr <https://gafaelfawr.lsst.io/>`__ to authenticate the client API 
 
 In the server, use the user identity provided by Gafaelfawr in the request to construct the SQL queries such that data products not visible to the user are not queried or returned.
 
-For data downloads, transform GCS URLs that would be returned by Butler to `signed download URLs <https://cloud.google.com/storage/docs/access-control/signed-urls>`__.
-This will allow the client to download the data without needing GCS credentials.
+For data that is stored in an object store (as opposed to an accessible POSIX file system), transform GCS URLs that would be returned by Butler to `signed download URLs <https://cloud.google.com/storage/docs/access-control/signed-urls>`__.
+This will allow the client to download the data without requiring its own GCS credentials.
+
 This assumes that any object storage system used in other Rubin Observatory Data Facilities will also support signed URLs.
+They are supported by GCS, Amazon S3, and Ceph.
 
 Alternately, if there are a large number of such URLs in a typical reply or if the client normally doesn't use most URLs, this can be optimized by adding another API call.
 Return GCS URLs or some equivalent pointer than then add a new API call to convert them to signed URLs on demand, and add code to the client to do that conversion before using a GCS URL.
