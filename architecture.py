@@ -8,10 +8,17 @@ from diagrams.gcp.database import SQL
 from diagrams.gcp.storage import Storage
 from diagrams.onprem.client import Client, User
 
-os.chdir(os.path.dirname(__file__))
-
 graph_attr = {
     "label": "",
+    "labelloc": "bbc",
+    "nodesep": "0.2",
+    "pad": "0.2",
+    "ranksep": "0.75",
+    "splines": "spline",
+}
+
+node_attr = {
+    "fontsize": "12.0",
 }
 
 with Diagram(
@@ -20,6 +27,7 @@ with Diagram(
         filename="architecture",
         outformat="png",
         graph_attr=graph_attr,
+        node_attr=node_attr,
 ):
     user = User("End user")
     client = Client("Butler client")
