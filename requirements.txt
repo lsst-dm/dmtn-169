@@ -1,2 +1,2 @@
 diagrams
-documenteer[technote]
+documenteer[technote]>=2.0,<3

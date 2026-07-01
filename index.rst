@@ -1,14 +1,13 @@
-:tocdepth: 1
+##########################################
+A model for Butler registry access control
+##########################################
 
-.. sectnum::
+.. abstract::
 
-Abstract
-========
-
-Butler manages read and write access to Rubin Observatory data.
-Different types of data require different access control rules (Data Release versus User Generated data products, for example).
-Butler itself also needs a backing SQL database to store its information, which should be protected from unauthorized modification.
-This tech note proposes a design for access control for both Butler queries and for data upload and download mediated by Butler.
+   Butler manages read and write access to Rubin Observatory data.
+   Different types of data require different access control rules (Data Release versus User Generated data products, for example).
+   Butler itself also needs a backing SQL database to store its information, which should be protected from unauthorized modification.
+   This technote proposes a design for access control for both Butler queries and for data upload and download mediated by Butler.
 
 .. note::
 
@@ -90,10 +89,7 @@ For data storage, the client would use the following process:
 In this design, all access control decisions are concentrated in the Butler server, and only the Butler server needs object store credentials or SQL database access.
 A single SQL database can continue to be used for both Data Release and User Generated data products without complex database ACLs.
 
-.. figure:: /_static/architecture.png
-   :name: Proposed Butler architecture
-
-   Proposed Butler architecture
+.. diagrams:: architecture.py
 
 Drawbacks
 =========
